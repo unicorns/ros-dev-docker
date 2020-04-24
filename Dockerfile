@@ -30,16 +30,17 @@ RUN cd /tmp \
     && mv code-server* /usr/local/lib/code-server \
     && ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
-RUN pip install --upgrade pip
-RUN python -m pip install catkin_tools casadi
-RUN apt-get install -y vim
-RUN apt-get install -y git
-
-RUN rosdep init
-
 # dumb-init
 RUN wget -q https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb
 RUN dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
+
+# Dev dependencies
+RUN apt-get install -y vim
+RUN apt-get install -y git
+RUN pip install --upgrade pip
+RUN python -m pip install catkin_tools casadi utm xmltodict
+
+RUN rosdep init
 
 # Expose port for code-server
 EXPOSE 8080
@@ -48,6 +49,9 @@ USER docker:docker
 ENV PATH="$HOME/.local/bin:${PATH}"
 
 RUN rosdep update
+
+RUN echo "[ -f ~/.bashrc.local ] && source ~/.bashrc.local" >> /home/docker/.bashrc
+COPY bashrc /home/docker/.bashrc.local
 
 ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/local/bin/code-server", "--host", "0.0.0.0", "."]
 
