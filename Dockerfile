@@ -33,10 +33,15 @@ RUN cd /tmp \
 RUN pip install --upgrade pip
 RUN python -m pip install catkin_tools casadi
 RUN apt-get install -y vim
+RUN apt-get install -y git
 
 RUN rosdep init
 
-# exposed port for code-server
+# dumb-init
+RUN wget -q https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb
+RUN dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
+
+# Expose port for code-server
 EXPOSE 8080
 WORKDIR /usr/src/catkin_ws
 USER docker:docker
@@ -44,7 +49,11 @@ ENV PATH="$HOME/.local/bin:${PATH}"
 
 RUN rosdep update
 
-# code-server does not automatically run.
-# To run, execute `code-server --host=0.0.0.0 .`
-#   or `nohup code-server --host=0.0.0.0 . > /tmp/code-server.log &`
-ENTRYPOINT ["fixuid", "-q"]
+ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/local/bin/code-server", "--host", "0.0.0.0", "."]
+
+# Useful code-server commands:
+#   `code-server --host=0.0.0.0 .`
+#   `nohup code-server --host=0.0.0.0 . > /tmp/code-server.log &`
+
+# References:
+# https://github.com/cdr/code-server/blob/8608ae2f08ef1d4cc8ab2bc1d90633b018a4f41b/ci/release-image/Dockerfile
