@@ -37,8 +37,11 @@ RUN dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
 # Dev dependencies
 RUN apt-get install -y vim
 RUN apt-get install -y git
+RUN apt-get install -y python3-pyqt5
 RUN pip install --upgrade pip
 RUN python -m pip install catkin_tools casadi utm xmltodict
+RUN pip3 install --upgrade pip
+RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2
 
 RUN rosdep init
 
