@@ -23,4 +23,10 @@ WORKDIR /usr/src/catkin_ws
 RUN pip install catkin_tools casadi
 RUN apt install -y vim
 
+# exposed port for code-server
+EXPOSE 8080
+
+# code-server does not automatically run.
+# To run, execute `code-server --host=0.0.0.0 .`
+#   or `nohup code-server --host=0.0.0.0 . > /tmp/code-server.log &`
 CMD ["/bin/bash"]
