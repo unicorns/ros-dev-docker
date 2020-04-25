@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/unicorns/ros-dev-docker/ros-dev:kinetic-1.0.10
+FROM ros-dev
 
 # optional, if the default user is not "root", you might need to switch to root here and at the end of the script to the original user again.
 # e.g.
