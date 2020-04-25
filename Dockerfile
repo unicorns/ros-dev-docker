@@ -1,3 +1,5 @@
+FROM carlasim/carla:0.9.8 as carla
+
 FROM ubuntu:16.04
 
 RUN apt-get update && apt-get install -y lsb-release software-properties-common
@@ -7,6 +9,28 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
 # =============== Project dependencies ===============
 RUN add-apt-repository -y ppa:ubuntugis
 RUN apt-get update && apt-get install -y ros-kinetic-desktop-full python-pip python3-pip ros-kinetic-navigation ros-kinetic-jsk-recognition-msgs qgis
+RUN apt-get install -y git wget libpng16-16
+
+RUN pip install --upgrade pip
+RUN python -m pip install catkin_tools casadi utm xmltodict pygame
+RUN pip3 install --upgrade pip
+RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2 pyqt5
+
+# Carla client
+COPY --from=carla --chown=root /home/carla/PythonAPI /opt/carla/PythonAPI
+RUN cd /opt/carla/PythonAPI/carla && \
+    python -m wheel convert dist/carla*py2.7*.egg && \
+    python -m pip install carla*cp27*.whl
+RUN cd /opt/carla/PythonAPI/carla && \
+    python3 -m wheel convert dist/carla*py3.5*.egg && \
+    python3 -m pip install carla*cp35*.whl
+
+# Carla ROS bridge
+RUN mkdir -p /opt/carla-ros-bridge/catkin_ws/src && \
+    cd /opt/carla-ros-bridge && \
+    git clone https://github.com/carla-simulator/ros-bridge.git --recursive && \
+    cd catkin_ws/src && \
+    ln -s ../../ros-bridge
 
 # ===============  Add a non-root user ===============
 RUN addgroup --gid 1000 docker && \
@@ -22,7 +46,6 @@ RUN USER=docker && \
     printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
 
 # =============== Development dependencies ===============
-RUN apt-get install -y wget
 # https://github.com/cdr/code-server/blob/8608ae2f08ef1d4cc8ab2bc1d90633b018a4f41b/ci/release-image/Dockerfile#L36
 RUN cd /tmp \
     && wget -q https://github.com/cdr/code-server/releases/download/3.1.1/code-server-3.1.1-linux-x86_64.tar.gz \
@@ -37,12 +60,6 @@ RUN dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
 
 # Dev dependencies
 RUN apt-get install -y vim
-RUN apt-get install -y git
-RUN apt-get install -y python3-pyqt5
-RUN pip install --upgrade pip
-RUN python -m pip install catkin_tools casadi utm xmltodict
-RUN pip3 install --upgrade pip
-RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2
 
 RUN rosdep init
 
@@ -53,6 +70,14 @@ USER docker:docker
 ENV PATH="$HOME/.local/bin:${PATH}"
 
 RUN rosdep update
+
+RUN cd /opt/carla-ros-bridge/catkin_ws && \
+    sudo chown -R docker:docker . && \
+    /bin/bash -c \
+    "source /opt/ros/kinetic/setup.bash && \
+    rosdep install -y --from-paths src --ignore-src -r && \
+    catkin_make"
+
 
 RUN echo "[ -f ~/.bashrc.local ] && source ~/.bashrc.local" >> /home/docker/.bashrc
 COPY bashrc /home/docker/.bashrc.local
