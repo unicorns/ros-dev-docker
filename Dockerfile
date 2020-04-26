@@ -9,7 +9,10 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
 # =============== Project dependencies ===============
 RUN add-apt-repository -y ppa:ubuntugis
 RUN apt-get update && apt-get install -y ros-kinetic-desktop-full python-pip python3-pip ros-kinetic-navigation ros-kinetic-jsk-recognition-msgs qgis
-RUN apt-get install -y git wget libpng16-16
+RUN apt-get install -y git wget libpng16-16 locales
+
+# Update locales
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
 
 RUN pip install --upgrade pip
 RUN python -m pip install catkin_tools casadi utm xmltodict pygame
