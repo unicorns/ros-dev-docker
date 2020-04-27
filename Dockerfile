@@ -17,7 +17,7 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && dpkg
 RUN pip install --upgrade pip
 RUN python -m pip install catkin_tools casadi utm xmltodict pygame
 RUN pip3 install --upgrade pip
-RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2 pyqt5
+RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2
 
 # Carla client
 COPY --from=carla --chown=root /home/carla/PythonAPI /opt/carla/PythonAPI
