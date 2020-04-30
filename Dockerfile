@@ -51,7 +51,7 @@ RUN USER=docker && \
 # =============== Development dependencies ===============
 # https://github.com/cdr/code-server/blob/8608ae2f08ef1d4cc8ab2bc1d90633b018a4f41b/ci/release-image/Dockerfile#L36
 RUN cd /tmp \
-    && wget -q https://github.com/cdr/code-server/releases/download/3.1.1/code-server-3.1.1-linux-x86_64.tar.gz \
+    && wget -q https://github.com/cdr/code-server/releases/download/3.2.0/code-server-3.2.0-linux-x86_64.tar.gz \
     && tar -xzf code-server*.tar.gz \
     && rm code-server*.tar.gz \
     && mv code-server* /usr/local/lib/code-server \
