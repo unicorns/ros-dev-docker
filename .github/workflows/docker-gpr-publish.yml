@@ -92,8 +92,8 @@ jobs:
           echo NVIDIA_IMAGE_ID=$NVIDIA_IMAGE_ID
           echo VERSION=$VERSION
 
-          docker tag image $IMAGE_ID:$VERSION
-          docker tag image $NVIDIA_IMAGE_ID:$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag $NVIDIA_IMAGE_NAME $NVIDIA_IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
           docker push $NVIDIA_IMAGE_ID:$VERSION
 
