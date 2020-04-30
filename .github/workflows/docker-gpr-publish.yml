@@ -20,8 +20,38 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
+# No need for tests right now
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v2
+
+#       - name: free disk space
+#         run: |
+#           sudo swapoff -a
+#           sudo rm -f /swapfile
+#           sudo apt clean
+#           docker rmi $(docker image ls -aq)
+#           df -h
+        
+#       - name: Run tests
+#         run: |
+#           if [ -f docker-compose.test.yml ]; then
+#             docker-compose --file docker-compose.test.yml build
+#             docker-compose --file docker-compose.test.yml run sut
+#           else
+#             ./build.sh
+#           fi
+
+  # Push image to GitHub Packages.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    # Ensure test job passes before pushing image.
+    # needs: test
+
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
@@ -33,28 +63,7 @@ jobs:
           sudo apt clean
           docker rmi $(docker image ls -aq)
           df -h
-        
-      - name: Run tests
-        run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            ./build.sh
-          fi
-
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: test
-
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v2
-
+          
       - name: Build images
         run: ./build.sh
 
@@ -87,3 +96,6 @@ jobs:
           docker tag image $NVIDIA_IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
           docker push $NVIDIA_IMAGE_ID:$VERSION
+
+      - name: Print remaining disk space
+        run: df -h
