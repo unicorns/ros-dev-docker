@@ -29,11 +29,14 @@ RUN cd /opt/carla/PythonAPI/carla && \
     python3 -m pip install carla*cp35*.whl
 
 # Carla ROS bridge
+# Fix version at 0.9.8 (b83e62a9bb7ab318f9dc24e21b92fa75f5a9ffb0)
 RUN mkdir -p /opt/carla-ros-bridge/catkin_ws/src && \
     cd /opt/carla-ros-bridge && \
     git clone https://github.com/carla-simulator/ros-bridge.git --recursive && \
     cd catkin_ws/src && \
-    ln -s ../../ros-bridge
+    ln -s ../../ros-bridge && \
+    cd ros-bridge && \
+    git checkout b83e62a9bb7ab318f9dc24e21b92fa75f5a9ffb0
 
 # ===============  Add a non-root user ===============
 RUN addgroup --gid 1000 docker && \
