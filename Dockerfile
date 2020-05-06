@@ -2,6 +2,8 @@ FROM carlasim/carla:0.9.8 as carla
 
 FROM ubuntu:16.04
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && apt-get install -y lsb-release software-properties-common apt-transport-https
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' \
       && apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
@@ -52,6 +54,7 @@ RUN USER=docker && \
     printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
 
 # =============== Development dependencies ===============
+# code-server
 # https://github.com/cdr/code-server/blob/8608ae2f08ef1d4cc8ab2bc1d90633b018a4f41b/ci/release-image/Dockerfile#L36
 RUN cd /tmp \
     && wget -q https://github.com/cdr/code-server/releases/download/3.2.0/code-server-3.2.0-linux-x86_64.tar.gz \
@@ -60,10 +63,14 @@ RUN cd /tmp \
     && mv code-server* /usr/local/lib/code-server \
     && ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
+# clangd
 RUN sh -c 'echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-$(lsb_release -sc) main" > /etc/apt/sources.list.d/llvm-toolchain.list' && \
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add - && \
     apt-get update && \
     apt-get install -y clangd
+
+# VNC
+RUN apt install -y lxde x11vnc xvfb
 
 # dumb-init
 RUN wget -q https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb
@@ -74,8 +81,10 @@ RUN apt-get install -y vim
 
 RUN rosdep init
 
-# Expose port for code-server
+# Expose ports for code-server and vnc
 EXPOSE 8080
+EXPOSE 5900
+
 WORKDIR /usr/src/catkin_ws
 USER docker:docker
 ENV PATH="$HOME/.local/bin:${PATH}"
