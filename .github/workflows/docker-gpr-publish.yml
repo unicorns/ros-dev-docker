@@ -2,9 +2,11 @@ name: Docker (Github Packages)
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
     branches:
+      # Publish `master` as Docker `latest` image.
       - master
+      # Publish `v*` branch as Docker `v*-dev` image.
+      - v*
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -59,6 +61,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Print trigger information
+        run: echo "Github Ref: ${{ github.ref }}"
+
       - name: free disk space
         run: |
           sudo swapoff -a
@@ -87,6 +92,10 @@ jobs:
 
           # Strip "v" prefix from tag name
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')
+
+          # Strip "v" prefix from branch name
+          # echo "Github Ref: ${{ github.ref }}"
+          # [[ "${{ github.ref }}" == "refs/branches/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=kinetic-latest
