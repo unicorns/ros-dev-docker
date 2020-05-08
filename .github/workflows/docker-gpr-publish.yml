@@ -62,7 +62,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Print trigger information
-        run: echo "Github Ref: ${{ github.ref }}"
+        #run: echo "Github Ref: ${{ github.ref }}"
+        run: echo "${{ github.ref }}"
 
       - name: free disk space
         run: |
