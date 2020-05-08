@@ -63,12 +63,6 @@ RUN cd /tmp \
     && mv code-server* /usr/local/lib/code-server \
     && ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
-# clangd
-RUN sh -c 'echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-$(lsb_release -sc) main" > /etc/apt/sources.list.d/llvm-toolchain.list' && \
-    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add - && \
-    apt-get update && \
-    apt-get install -y clangd
-
 # VNC
 RUN apt install -y lxde x11vnc xvfb
 
