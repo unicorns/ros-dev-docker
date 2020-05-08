@@ -62,7 +62,6 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Print trigger information
-        #run: echo "Github Ref: ${{ github.ref }}"
         run: echo "${{ github.ref }}"
 
       - name: free disk space
@@ -95,8 +94,7 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')
 
           # Strip "v" prefix from branch name
-          # echo "Github Ref: ${{ github.ref }}"
-          # [[ "${{ github.ref }}" == "refs/branches/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')
+          [[ "${{ github.ref }}" == "refs/heads/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')-dev
 
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=kinetic-latest
