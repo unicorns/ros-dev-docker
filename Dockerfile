@@ -64,7 +64,7 @@ RUN cd /tmp \
     && ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
 # VNC
-RUN apt install -y lxde x11vnc xvfb
+RUN apt install -y lxde x11vnc xvfb mesa-utils supervisor
 
 # dumb-init
 RUN wget -q https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb
@@ -96,7 +96,12 @@ RUN cd /opt/carla-ros-bridge/catkin_ws && \
 RUN echo "[ -f ~/.bashrc.local ] && source ~/.bashrc.local" >> /home/docker/.bashrc
 COPY bashrc /home/docker/.bashrc.local
 
-ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/local/bin/code-server", "--host", "0.0.0.0", "."]
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+RUN sudo chown -R docker:docker /etc/supervisor
+
+ENV SHELL=/bin/bash
+
+ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/bin/supervisord" , "-n"]
 
 # Useful code-server commands:
 #   `code-server --host=0.0.0.0 .`
