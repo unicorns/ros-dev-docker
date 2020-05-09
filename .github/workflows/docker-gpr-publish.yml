@@ -91,10 +91,10 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
           # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')
+          [[ "${{ github.ref }}" == "refs/tags/v"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')
 
           # Strip "v" prefix from branch name
-          [[ "${{ github.ref }}" == "refs/heads/"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')-dev
+          [[ "${{ github.ref }}" == "refs/heads/v"* ]] && VERSION=kinetic-$(echo $VERSION | sed -e 's/^v//')-dev
 
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=kinetic-latest
