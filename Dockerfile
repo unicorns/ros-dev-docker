@@ -82,6 +82,9 @@ EXPOSE 5900
 WORKDIR /usr/src/catkin_ws
 USER docker:docker
 ENV PATH="$HOME/.local/bin:${PATH}"
+ENV SHELL=/bin/bash
+ENV XDG_DATA_HOME=/usr/src/catkin_ws/.xdg-home/data
+ENV XDG_CONFIG_HOME=/usr/src/catkin_ws/.xdg-home/config
 
 RUN rosdep update
 
@@ -92,14 +95,11 @@ RUN cd /opt/carla-ros-bridge/catkin_ws && \
     rosdep install -y --from-paths src --ignore-src -r && \
     catkin_make"
 
-
 RUN echo "[ -f ~/.bashrc.local ] && source ~/.bashrc.local" >> /home/docker/.bashrc
 COPY bashrc /home/docker/.bashrc.local
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 RUN sudo chown -R docker:docker /etc/supervisor
-
-ENV SHELL=/bin/bash
 
 ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/bin/supervisord" , "-n"]
 
