@@ -75,8 +75,9 @@ RUN apt-get install -y vim terminator
 
 RUN rosdep init
 
-# Expose ports for code-server and vnc
+# Expose ports for code-server, rosbridge (websocket) and vnc
 EXPOSE 8080
+EXPOSE 9090
 EXPOSE 5900
 
 WORKDIR /usr/src/catkin_ws
