@@ -101,6 +101,8 @@ COPY bashrc /home/docker/.bashrc.local
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 RUN sudo chown -R docker:docker /etc/supervisor
 
+COPY Desktop /home/docker/Desktop
+
 ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/bin/supervisord" , "-n"]
 
 # Useful code-server commands:
