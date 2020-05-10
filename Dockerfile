@@ -66,6 +66,18 @@ RUN cd /tmp \
 # VNC
 RUN apt install -y lxde x11vnc xvfb mesa-utils supervisor
 
+# simplescreenrecorder
+RUN apt install -y build-essential cmake pkg-config qt4-qmake libqt4-dev desktop-file-utils \
+                   libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libasound2-dev \
+                   libpulse-dev libjack-jackd2-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev \
+                   libxfixes-dev libxext-dev libxi-dev libxinerama-dev
+USER docker:docker
+RUN cd /tmp && \
+    git clone https://github.com/ben-z/ssr.git && \
+    cd ssr && \
+    ENABLE_32BIT_GLINJECT=FALSE ./simple-build-and-install
+USER root:root
+
 # dumb-init
 RUN wget -q https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb
 RUN dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
