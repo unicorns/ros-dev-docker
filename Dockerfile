@@ -38,7 +38,8 @@ RUN mkdir -p /opt/carla-ros-bridge/catkin_ws/src && \
     cd catkin_ws/src && \
     ln -s ../../ros-bridge && \
     cd ros-bridge && \
-    git checkout b83e62a9bb7ab318f9dc24e21b92fa75f5a9ffb0
+    git checkout b83e62a9bb7ab318f9dc24e21b92fa75f5a9ffb0 && \
+    git submodule update
 
 # ===============  Add a non-root user ===============
 RUN addgroup --gid 1000 docker && \
@@ -106,7 +107,8 @@ RUN cd /opt/carla-ros-bridge/catkin_ws && \
     /bin/bash -c \
     "source /opt/ros/kinetic/setup.bash && \
     rosdep install -y --from-paths src --ignore-src -r && \
-    catkin_make"
+    catkin config --install && \
+    catkin build --cmake-args -DCMAKE_BUILD_TYPE=Release"
 
 RUN echo "[ -f ~/.bashrc.local ] && source ~/.bashrc.local" >> /home/docker/.bashrc
 COPY bashrc /home/docker/.bashrc.local
