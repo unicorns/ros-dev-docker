@@ -84,7 +84,7 @@ RUN wget -q https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init
 RUN dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
 
 # Dev dependencies
-RUN apt-get install -y vim terminator
+RUN apt-get install -y vim terminator chromium-browser
 
 RUN rosdep init
 
