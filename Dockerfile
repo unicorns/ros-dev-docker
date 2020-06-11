@@ -17,7 +17,7 @@ RUN apt-get install -y git wget libpng16-16 locales gdb libomp-dev
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
 
 RUN pip install --upgrade pip
-RUN python -m pip install catkin_tools casadi utm xmltodict pygame matplotlib==2.2.5 simple_pid tornado pymongo
+RUN python -m pip install catkin_tools casadi utm xmltodict pygame matplotlib==2.2.5 simple_pid tornado pymongo bandit
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2 bandit
 
