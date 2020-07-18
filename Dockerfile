@@ -12,6 +12,7 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
 RUN add-apt-repository -y ppa:ubuntugis
 RUN apt-get update && apt-get install -y ros-kinetic-desktop-full python-pip python3-pip ros-kinetic-navigation ros-kinetic-jsk-recognition-msgs ros-kinetic-rosbridge-suite qgis
 RUN apt-get install -y git wget libpng16-16 locales gdb libomp-dev
+RUN apt-get install libpugixml-dev libtinyxml-dev
 
 # Update locales
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
@@ -32,14 +33,18 @@ RUN cd /opt/carla/PythonAPI/carla && \
 
 # Carla ROS bridge
 # Fix version at 0.9.8 (b83e62a9bb7ab318f9dc24e21b92fa75f5a9ffb0)
-RUN mkdir -p /opt/carla-ros-bridge/catkin_ws/src && \
-    cd /opt/carla-ros-bridge && \
+RUN mkdir -p /opt/global_catkin_ws_deps/src && \
+    cd /opt/global_catkin_ws_deps/src && \
     git clone https://github.com/carla-simulator/ros-bridge.git --recursive && \
-    cd catkin_ws/src && \
-    ln -s ../../ros-bridge && \
-    cd ros-bridge && \
+    cd /opt/global_catkin_ws_deps/src/ros-bridge && \
     git checkout b83e62a9bb7ab318f9dc24e21b92fa75f5a9ffb0 && \
     git submodule update
+
+RUN cd /opt/global_catkin_ws_deps/src && \
+    git clone https://github.com/fzi-forschungszentrum-informatik/icmaker.git
+
+RUN cd /opt/global_catkin_ws_deps/src && \
+    git clone https://github.com/rowandempster/liblanelet.git
 
 # ===============  Add a non-root user ===============
 RUN addgroup --gid 1000 docker && \
@@ -102,7 +107,7 @@ ENV XDG_CONFIG_HOME=/usr/src/catkin_ws/.xdg-home/config
 
 RUN rosdep update
 
-RUN cd /opt/carla-ros-bridge/catkin_ws && \
+RUN cd /opt/global_catkin_ws_deps && \
     sudo chown -R docker:docker . && \
     /bin/bash -c \
     "source /opt/ros/kinetic/setup.bash && \
