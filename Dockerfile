@@ -21,6 +21,7 @@ RUN pip install --upgrade pip
 RUN python -m pip install catkin_tools casadi utm xmltodict pygame matplotlib==2.2.5 simple_pid tornado pymongo bandit
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install geopy pyyaml rospkg utm psycopg2 bandit
+RUN pip2.7 install psycopg2
 
 # Carla client
 COPY --from=carla --chown=root /home/carla/PythonAPI /opt/carla/PythonAPI
