@@ -76,12 +76,12 @@ jobs:
         run: ./build.sh
 
       - name: Log into registry
-        run: echo "${{ secrets.GPR_UPLOAD_PACKAGE_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GPR_UPLOAD_PACKAGE_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push images
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-          NVIDIA_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$NVIDIA_IMAGE_NAME
+          IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME
+          NVIDIA_IMAGE_ID=ghcr.io/${{ github.repository }}/$NVIDIA_IMAGE_NAME
           
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
